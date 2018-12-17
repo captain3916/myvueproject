@@ -48,10 +48,10 @@ export default new Router({
           name: 'teamBuy',
           component: () => import('../components/teamBuy/teamBuy.vue'),
         },
-        // {
-        //   path: '',
-        //   redirect: '/films/nowPlaying',
-        // },
+        {
+          path: '',
+          redirect: '/films/nowPlaying',
+        },
       ],
     },
     // 9.9拼团
