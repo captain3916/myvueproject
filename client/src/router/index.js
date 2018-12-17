@@ -33,9 +33,9 @@ export default new Router({
         },
         // 影院列表
         {
-          path: 'cinames',
-          name: 'cinames',
-          component: () => import('../components/cinames/cinames.vue'),
+          path: 'cinemas',
+          name: 'cinemas',
+          component: () => import('../components/cinemas/cinemas.vue'),
         },
         // 个人中心
         {
@@ -43,12 +43,23 @@ export default new Router({
           name: 'center',
           component: () => import('../components/me/Me.vue'),
         },
+        {
+          path: 'teamBuy',
+          name: 'teamBuy',
+          component: () => import('../components/teamBuy/teamBuy.vue'),
+        },
         // {
         //   path: '',
         //   redirect: '/films/nowPlaying',
         // },
       ],
     },
+    // 9.9拼团
+    // {
+    //   path: 'teamBuy',
+    //   name: 'teamBuy',
+    //   component: () => import('../components/teamBuy/teamBuy.vue'),
+    // },
     // 登录
     {
       path: '/login',
@@ -72,12 +83,6 @@ export default new Router({
       path: '/film/:filmId',
       name: 'filmDetail',
       component: () => import('../components/filmDetail/filmDetail.vue'),
-    },
-    // 9.9拼团
-    {
-      path: 'teamBuy',
-      name: 'teamBuy',
-      component: () => import('../components/teamBuy/teamBuy.vue'),
     },
     // {
     //   path: '*',

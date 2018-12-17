@@ -1,12 +1,12 @@
 <template>
-  <div class="cinames">
+  <div class="cinemas">
     我是影院页面
   </div>
 </template>
 
 <script>
 export default {
-  name: 'cinames',
+  name: 'cinemas',
 };
 
 </script>
