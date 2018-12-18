@@ -1,11 +1,13 @@
 <template>
   <div class="main">
-    <transition
-    mode="out-in"
-    enter-active-class="bounceInUp"
-    leave-active-class="bounceOutDown">
-      <router-view></router-view>
-    </transition>
+    <keep-alive>
+      <transition
+      mode="out-in"
+      enter-active-class="bounceInUp"
+      leave-active-class="bounceOutDown">
+        <router-view></router-view>
+      </transition>
+    </keep-alive>
     <Nav></Nav>
   </div>
 </template>

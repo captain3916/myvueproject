@@ -13,17 +13,8 @@
         <div class="hot-city">
           <div class="city-index-title">热门城市</div>
           <ul class="city-index-detail">
-            <li>
-              <div>北京</div>
-            </li>
-            <li>
-              <div>上海</div>
-            </li>
-            <li>
-              <div>广州</div>
-            </li>
-            <li>
-              <div>深圳</div>
+            <li v-for="(item,index) in hotCitys" :key="index">
+              <div @click="changeCity(item)">{{item.name}}</div>
             </li>
           </ul>
         </div>
@@ -119,14 +110,50 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex';
+
 export default {
   name: 'CityList',
   data() {
     return {
-      curTab: 0,
+      cityList: [],
     };
   },
-  components: {},
+  computed: {
+    // 获取热门城市
+    hotCitys() {
+      return this.cityList.filter(item => item.isHot === 1);
+    },
+  },
+  methods: {
+    ...mapMutations([
+      'addCity',
+      'addCityId',
+    ]),
+    /**
+     * 更改当前城市
+     * @param {Object} item 就是当前城市对象
+     */
+    changeCity(item) {
+      this.addCity(item.name);
+      this.addCityId(item.cityId);
+      this.$router.go(-1);
+    },
+  },
+  created() {
+    /**
+     * 获取所有城市
+     */
+    this.$axios.get(this.$URL.citysUrl).then((response) => {
+      if (response.data.code === 0) {
+        this.cityList = response.data.data.citys;
+      } else {
+        /* eslint-disable no-alert */
+        alert(response.data.msg);
+      }
+    });
+  },
+
 };
 </script>
 

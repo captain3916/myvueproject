@@ -5,8 +5,8 @@ import axios from 'axios';
 import 'mint-ui/lib/style.css';
 import App from './App';
 import router from './router';
-import store from './store';
 import Url from './router/apiRouter';
+import store from './store';
 
 Vue.prototype.$axios = axios;
 Vue.prototype.$URL = Url;

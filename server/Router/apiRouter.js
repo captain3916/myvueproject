@@ -63,4 +63,76 @@ router.get("/getFilms",(req,res)=>{
     });
 });
 
+/**
+ * 获取所有城市信息接口
+ */
+//地址: http://localhost:3000/api/getcitys
+router.get("/getcitys",(req,res)=>{
+    console.log('收到了城市列表请求')
+    let result = {}; //要返回的数据
+
+    //连接数据库
+    MongoClient.connect(URL,{useNewUrlParser:true},(err,client)=>{
+        if(err){
+            console.log(err);
+            result.code = 1;
+            result.msg = '网络繁忙,请稍后';
+            res.json(result);
+            return;
+        }
+        let db = client.db('maizuo');
+        db.collection('citys').find().toArray((err, data) =>{
+            if(err){
+                console.log(err);
+                result.code = 1;
+                result.msg = '网络繁忙,请稍后';
+            }else{
+                result.code = 0;
+                result.msg = 'OK';
+                result.data = {
+                    citys: data,
+                }
+            }
+            client.close();
+            res.json(result);
+        });
+    });
+});
+
+/**
+ * 获取城市ID
+ */
+//地址: http://localhost:3000/api/getcityId
+router.get("/getcityId",(req,res)=>{
+    console.log('收到了查询城市ID的请求');
+    let name = req.query.cityName;
+    console.log(name);
+    let result = {}; //要返回的数据
+
+    //连接数据库
+    MongoClient.connect(URL,{useNewUrlParser:true},(err,client)=>{
+        if(err){
+            console.log(err);
+            result.code = 1;
+            result.msg = '网络繁忙,请稍后';
+            res.json(result);
+            return;
+        }
+        let db = client.db('maizuo');
+        db.collection('citys').findOne({ name }, (err, data) =>{
+            if(err){
+                console.log(err);
+                result.code = 1;
+                result.msg = '网络繁忙,请稍后';
+            }else{
+                result.code = 0;
+                result.msg = 'OK';
+                result.city = data;
+            }
+            client.close();
+            res.json(result);
+        });
+    });
+});
+
 module.exports = router;

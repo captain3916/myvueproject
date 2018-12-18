@@ -24,7 +24,9 @@ export default {
         ]),
     },
     created() {
-        this.getCity();
+        if (!this.curCity) {
+            this.getCity();
+        }
     },
 };
 </script>
