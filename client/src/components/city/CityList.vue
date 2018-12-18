@@ -10,7 +10,7 @@
     <mt-search
       v-model="keyValue"
       cancel-text="取消"
-      placeholder="搜索">
+      placeholder="请输入城市名称或拼音">
     </mt-search>
 
     <ul class="mint-indexlist-content"

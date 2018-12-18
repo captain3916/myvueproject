@@ -64,6 +64,42 @@ router.get("/getFilms",(req,res)=>{
 });
 
 /**
+ * 获取某部电影信息
+ * @param {String} filmId 电影Id
+ */
+//地址: http://localhost:3000/api/getfilmItem
+router.get("/getfilmItem",(req,res)=>{
+    console.log('收到了获取某一部电影的请求')
+    let filmId = +req.query.filmId; //每页数量
+    let result = {}; //要返回的数据
+
+    //连接数据库
+    MongoClient.connect(URL,{useNewUrlParser:true},(err,client)=>{
+        if(err){
+            console.log(err);
+            result.code = 1;
+            result.msg = '网络繁忙,请稍后';
+            res.json(result);
+            return;
+        }
+        let db = client.db('maizuo')
+        db.collection('films').findOne({filmId}, (err,data)=>{
+            if(err){
+                console.log(err);
+                result.code = 1;
+                result.msg = '网络繁忙,请稍后';
+            }else{
+                result.code = 0;
+                result.msg = 'OK';
+                result.data = data;
+            }
+            client.close();
+            res.json(result);
+        });
+    });
+});
+
+/**
  * 获取所有城市
  */
 //地址: http://localhost:3000/api/getcitys
@@ -101,11 +137,11 @@ router.get("/getcitys",(req,res)=>{
 
 /**
  * 获取某个城市ID
+ * @param {string} 城市名称
  */
 //地址: http://localhost:3000/api/getcityId
 router.get("/getcityId",(req,res)=>{
     let name = req.query.cityName;
-    console.log(name);
     let result = {}; //要返回的数据
 
     //连接数据库
@@ -127,6 +163,43 @@ router.get("/getcityId",(req,res)=>{
                 result.code = 0;
                 result.msg = 'OK';
                 result.city = data;
+            }
+            client.close();
+            res.json(result);
+        });
+    });
+});
+
+/**
+ * 获取某个城市所有影院
+ * @param {string} cityId:城市ID
+ */
+//地址: http://localhost:3000/api/getCinemas
+router.get("/getCinemas",(req,res)=>{
+    let cityId = +req.query.cityId;
+    let result = {}; //要返回的数据
+
+    //连接数据库
+    MongoClient.connect(URL,{useNewUrlParser:true},(err,client)=>{
+        if(err){
+            console.log(err);
+            result.code = 1;
+            result.msg = '网络繁忙,请稍后';
+            res.json(result);
+            return;
+        }
+        let db = client.db('maizuo');
+        db.collection('cinemas').find({ cityId }).toArray((err, data) =>{
+            if(err){
+                console.log(err);
+                result.code = 1;
+                result.msg = '网络繁忙,请稍后';
+            }else{
+                result.code = 0;
+                result.msg = 'OK';
+                result.data = {
+                    cinemas: data,
+                };
             }
             client.close();
             res.json(result);

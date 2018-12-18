@@ -13,11 +13,12 @@ export default {
     };
   },
   mounted() {
-    console.log('来到了拼团页面');
   },
 };
 </script>
 
 <style lang="scss">
-
+.teamBuy{
+  flex: 1;
+}
 </style>
