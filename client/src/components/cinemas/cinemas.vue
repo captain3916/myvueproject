@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { Cell, Header, Button, Search } from 'mint-ui';
+import { Cell, Header, Button, Search, Indicator } from 'mint-ui';
 import { mapState } from 'vuex';
 
 export default {
@@ -77,6 +77,10 @@ export default {
   },
   created() {
     // 获取当前城市所有影院数据
+    Indicator.open({
+      text: '加载中...',
+      spinnerType: 'fading-circle',
+    });
     const cityId = this.curCityId;
     this.$axios.get(this.$URL.cinemasUrl, {
       params: { cityId },
@@ -84,6 +88,7 @@ export default {
       if (response.data.code === 0) {
         this.cinemas = response.data.data.cinemas;
       }
+      Indicator.close();
     });
   },
 

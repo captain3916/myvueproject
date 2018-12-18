@@ -32,6 +32,8 @@
 </template>
 
 <script>
+import { Indicator } from 'mint-ui';
+
 export default {
   name: 'noPlayfilm',
   data() {
@@ -48,6 +50,10 @@ export default {
      * 获取电影列表
      */
     getFilms() {
+      Indicator.open({
+        text: '加载中...',
+        spinnerType: 'fading-circle',
+      });
       this.$axios.get(this.$URL.filmsUrl, {
         params: {
           pageSize: this.pageSize,
@@ -64,6 +70,7 @@ export default {
           /* eslint-disable no-alert */
           alert(response.data.msg);
         }
+        Indicator.close();
       });
     },
     /**

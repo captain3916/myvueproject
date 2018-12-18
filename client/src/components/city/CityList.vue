@@ -66,7 +66,7 @@
 
 <script>
 import { mapMutations } from 'vuex';
-import { Search, Header, Button, Cell } from 'mint-ui';
+import { Search, Header, Button, Cell, Indicator } from 'mint-ui';
 
 export default {
   name: 'CityList',
@@ -146,9 +146,14 @@ export default {
     /**
      * 获取所有城市
      */
+    Indicator.open({
+      text: '加载中...',
+      spinnerType: 'fading-circle',
+    });
     this.$axios.get(this.$URL.citysUrl).then((response) => {
       if (response.data.code === 0) {
         this.cityList = response.data.data.citys;
+        Indicator.close();
       } else {
         /* eslint-disable no-alert */
         alert(response.data.msg);

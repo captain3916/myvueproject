@@ -10,7 +10,7 @@
           <div class="film-info">
             <div class="film-info-name info-col">
               <span class="name">{{item.name}}</span>
-              <span class="item">{{item.item.name}}</span>
+              <span class="item">{{item.item&&item.item.name}}</span>
             </div>
             <div class="film-info-grade info-col">
               <span class="label">观众评分</span>
