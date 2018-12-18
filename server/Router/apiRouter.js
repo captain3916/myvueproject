@@ -64,7 +64,7 @@ router.get("/getFilms",(req,res)=>{
 });
 
 /**
- * 获取所有城市信息接口
+ * 获取所有城市
  */
 //地址: http://localhost:3000/api/getcitys
 router.get("/getcitys",(req,res)=>{
@@ -100,11 +100,10 @@ router.get("/getcitys",(req,res)=>{
 });
 
 /**
- * 获取城市ID
+ * 获取某个城市ID
  */
 //地址: http://localhost:3000/api/getcityId
 router.get("/getcityId",(req,res)=>{
-    console.log('收到了查询城市ID的请求');
     let name = req.query.cityName;
     console.log(name);
     let result = {}; //要返回的数据

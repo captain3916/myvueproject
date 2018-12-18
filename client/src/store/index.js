@@ -35,17 +35,6 @@ const mutations = {
 // 计算
 const getters = {
 
-  // curCityId: (state) => {
-  //   let res = 0;
-  //   console.log(state.curCity);
-  //   if (state.curCity) {
-  //     actions.getCityId().then((data) => {
-  //       res = data;
-  //     });
-  //     return res;
-  //   }
-  //   return res;
-  // },
 
 };
 

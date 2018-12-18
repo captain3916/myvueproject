@@ -1,6 +1,20 @@
 <template>
   <div class="mint-indexlist city-index">
-    <ul class="mint-indexlist-content">
+
+    <mt-header title="-当前城市-">
+      <mt-button class="iconfont icon-xiangzuo"
+        slot="left"
+        @click="$router.go(-1)"></mt-button>
+    </mt-header>
+
+    <mt-search
+      v-model="keyValue"
+      cancel-text="取消"
+      placeholder="搜索">
+    </mt-search>
+
+    <ul class="mint-indexlist-content"
+      v-if="isCityShow">
       <div class="recommend-city">
         <div class="gprs-city">
           <div class="city-index-title">GPS定位你所在的城市</div>
@@ -19,110 +33,92 @@
           </ul>
         </div>
       </div>
-      <li class="mint-indexsection city-index-section">
-        <p class="mint-indexsection-index">A</p>
+      <li class="mint-indexsection city-index-section"
+        v-for="(item,index) in citySort"
+        :key="index">
+        <p class="mint-indexsection-index">{{item.letter}}</p>
         <ul>
-          <li>鞍山</li>
-          <li>安庆</li>
-          <li>安阳</li>
-          <li>安顺</li>
-          <li>安康</li>
-        </ul>
-      </li>
-      <li class="mint-indexsection city-index-section">
-        <p class="mint-indexsection-index">A</p>
-        <ul>
-          <li>鞍山</li>
-          <li>安庆</li>
-          <li>安阳</li>
-          <li>安顺</li>
-          <li>安康</li>
-        </ul>
-      </li>
-      <li class="mint-indexsection city-index-section">
-        <p class="mint-indexsection-index">A</p>
-        <ul>
-          <li>鞍山</li>
-          <li>安庆</li>
-          <li>安阳</li>
-          <li>安顺</li>
-          <li>安康</li>
-        </ul>
-      </li>
-      <li class="mint-indexsection city-index-section">
-        <p class="mint-indexsection-index">A</p>
-        <ul>
-          <li>鞍山</li>
-          <li>安庆</li>
-          <li>安阳</li>
-          <li>安顺</li>
-          <li>安康</li>
-        </ul>
-      </li>
-      <li class="mint-indexsection city-index-section">
-        <p class="mint-indexsection-index">A</p>
-        <ul>
-          <li>鞍山</li>
-          <li>安庆</li>
-          <li>安阳</li>
-          <li>安顺</li>
-          <li>安康</li>
-        </ul>
-      </li>
-      <li class="mint-indexsection city-index-section">
-        <p class="mint-indexsection-index">A</p>
-        <ul>
-          <li>鞍山</li>
-          <li>安庆</li>
-          <li>安阳</li>
-          <li>安顺</li>
-          <li>安康</li>
+          <li v-for="(it,i) in item.list"
+           :key="i"
+           @click="changeCity(it)">
+           {{it.name}}
+          </li>
         </ul>
       </li>
     </ul>
-    <div class="mint-indexlist-nav">
+    <div class="mint-indexlist-nav" v-if="isCityShow">
       <ul>
-        <li>A</li>
-        <li>B</li>
-        <li>C</li>
-        <li>D</li>
-        <li>E</li>
-        <li>F</li>
-        <li>G</li>
-        <li>H</li>
-        <li>J</li>
-        <li>K</li>
-        <li>L</li>
-        <li>M</li>
-        <li>N</li>
-        <li>P</li>
-        <li>Q</li>
-        <li>R</li>
-        <li>S</li>
-        <li>T</li>
-        <li>W</li>
-        <li>X</li>
-        <li>Y</li>
-        <li>Z</li>
+        <li v-for="(item,index) in firstLetter" :key="index">
+          {{item}}
+        </li>
       </ul>
+    </div>
+    <div v-if="!isCityShow">
+      <mt-cell
+        v-for="(item,index) in searchCity"
+        :key="index"
+        :title="item.name"
+        @click.native="changeCity(item)">
+      </mt-cell>
     </div>
   </div>
 </template>
 
 <script>
 import { mapMutations } from 'vuex';
+import { Search, Header, Button, Cell } from 'mint-ui';
 
 export default {
   name: 'CityList',
   data() {
     return {
       cityList: [],
+      keyValue: '',
+
     };
   },
   computed: {
     // 获取热门城市
     hotCitys() {
       return this.cityList.filter(item => item.isHot === 1);
+    },
+    // 城市首字母拼音
+    firstLetter() {
+      const arr = [];
+      this.cityList.forEach((item) => {
+        const st = item.pinyin.charAt(0).toUpperCase();
+        if (arr.indexOf(st) === -1) arr.push(st);
+      });
+      return arr.sort();
+    },
+
+    // 城市按字母排序
+    citySort() {
+      /* eslint-disable arrow-body-style */
+      const letOrd = this.firstLetter;
+      const arr = letOrd.map((item) => { return { letter: item, list: [] }; });
+      this.cityList.forEach((item) => {
+        const st = item.pinyin.charAt(0).toUpperCase();
+        const i = letOrd.indexOf(st);
+        arr[i].list.push(item);
+      });
+      return arr;
+    },
+    // 是否显示所有城市列表
+    isCityShow() {
+      if (this.keyValue) return false;
+      return true;
+    },
+    // 城市搜索结果
+    searchCity() {
+      const arr = [];
+      const keyWord = this.keyValue;
+      this.cityList.forEach((item) => {
+        if (item.name.indexOf(keyWord) !== -1 || item.pinyin.indexOf(keyWord) !== -1) {
+          arr.push(item);
+        }
+      });
+      return arr;
     },
   },
   methods: {
@@ -139,6 +135,12 @@ export default {
       this.addCityId(item.cityId);
       this.$router.go(-1);
     },
+  },
+  components: {
+    'mt-header': Header,
+    'mt-button': Button,
+    'mt-search': Search,
+    'mt-cell': Cell,
   },
   created() {
     /**
@@ -160,10 +162,24 @@ export default {
 <style lang="scss">
 .mint-indexlist {
   position: absolute;
-  top: 94px;
   width: 100%;
   overflow: hidden;
-  height: calc(100vh - 94px);
+  .mint-header{
+    z-index: 100;
+    background-color: #fff;
+    color: #000;
+    font-size: 0.17rem;
+  }
+  .mint-search{
+    height: 0.52rem;
+    .mint-searchbar {
+      background-color: #f4f4f4;
+      a{
+        font-size: 0.14rem;
+        color: #000;
+      }
+    }
+  }
   .mint-indexlist-content {
     width: calc(100% - 17px);
     height: 100vh;
@@ -171,15 +187,15 @@ export default {
     overflow: auto;
     .recommend-city {
       background-color: #fff;
-      padding-left: 15px;
-      padding-top: 15px;
+      padding-left: 0.15rem;
+      padding-top: 0.15rem;
     }
   }
   .mint-indexlist-nav {
     position: absolute;
     top: 0;
     right: 0;
-    width: 17px;
+    width: 0.17rem;
     display: flex;
     justify-content: center;
     flex-direction: column;
@@ -201,7 +217,7 @@ export default {
   .city-index-title {
     font-size: 13px;
     color: #797d82;
-    margin-bottom: 10px;
+    margin-bottom: 0.1rem;
   }
   .city-index-detail {
     display: flex;
@@ -209,15 +225,15 @@ export default {
     flex-wrap: wrap;
     li {
       width: calc((100vw - 33px) / 3);
-      padding-bottom: 15px;
+      padding-bottom: 0.15rem;
       text-align: center;
       div {
-        height: 30px;
+        height: 0.3rem;
         background-color: #f4f4f4;
-        line-height: 30px;
-        border-radius: 3px;
+        line-height: 0.3rem;
+        border-radius: 0.03rme;
         box-sizing: border-box;
-        margin: 0 7.5px;
+        margin: 0 0.075rem;
         font-size: 14px;
         color: #191a1b;
       }
@@ -229,21 +245,21 @@ export default {
   p.mint-indexsection-index {
     background-color: #f4f4f4;
     color: #797d82;
-    padding-left: 15px;
-    height: 30px;
-    line-height: 30px;
+    padding-left: 0.15rem;
+    height: 0.3rem;
+    line-height: 0.13rem;
   }
   ul {
-    padding-left: 15px;
+    padding-left: 0.15rem;
     li {
       color: #191a1b;
       position: relative;
-      height: 48px;
-      width: calc((100vw - 33px) / 3);
+      height: 0.48rem;
+      width: calc((100vw - 0.33rem) / 3);
       text-align: center;
       float: left;
       font-size: 14px;
-      line-height: 48px;
+      line-height: 0.48rem;
     }
     li::after {
       content: "";
