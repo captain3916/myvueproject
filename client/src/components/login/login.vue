@@ -1,16 +1,17 @@
 <template>
   <div>
-    <header id="header">
+    <section class="main">
       <div class="logo"></div>
       <div class="sj">
-        <input type="text" placeholder="手机号" v-model="phoneInput">
-        <span>获取验证码</span>
+        <input type="text" placeholder="账号" v-model="phoneInput">
+        <!-- <span>获取验证码</span> -->
       </div>
       <div class="yzm">
-        <input type="text" placeholder="验证码" v-model="codeInput">
+        <input type="text" placeholder="密码" v-model="codeInput">
       </div>
-      <button>登录</button>
-    </header>
+      <button :disabled="canLogin" @click="login">登录</button>
+      <button @click="$router.replace('/register')">注册</button>
+    </section>
   </div>
 </template>
 
@@ -24,21 +25,32 @@ export default {
       codeInput: '',
     };
   },
-
   computed: {
-
+    // 是否禁用登录框
+    canLogin() {
+      if (this.phoneInput && this.codeInput) return false;
+      return true;
+    },
   },
 
   methods: {
-
+    login() {
+      console.log(111);
+      this.$axios.post(this.$URL.userLoginrUrl, {
+        userName: this.phoneInput,
+        userPsw: this.codeInput,
+      }).then((response) => {
+        console.log(response);
+      });
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
 
-#header {
-  height: 5rem;
+.main {
+  height: 6rem;
   display: flex;
   flex-direction: column;
   .logo {
@@ -70,7 +82,7 @@ export default {
   button {
     display: flex;
     justify-content: center;
-    height: 0.8rem;
+    height: 0.6rem;
     margin: 0.2rem 0.25rem;
     background: #ff5f16;
     font-size: 0.2rem;

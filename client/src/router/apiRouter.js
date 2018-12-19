@@ -9,4 +9,8 @@ export default {
   cinemasUrl: 'api/getCinemas',
   // 获取某部影片详细信息, 参数:filmId 代表电影Id
   filmItemUrl: 'api/getfilmItem',
+  // 用户注册, 参数:userName和 userPsw
+  userRegisterUrl: 'user/register',
+  // 用户登录, 参数:userName和 userPsw
+  userLoginrUrl: 'user/login',
 };

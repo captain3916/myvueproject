@@ -9,7 +9,7 @@
       <div class="yzm">
         <input type="text" placeholder="密码" v-model="codeInput">
       </div>
-      <button>注册</button>
+      <button :disabled="canRegister" @click="register">注册</button>
     </header>
   </div>
 </template>
@@ -26,11 +26,21 @@ export default {
   },
 
   computed: {
-
+    canRegister() {
+      if (this.phoneInput && this.codeInput) return false;
+      return true;
+    },
   },
 
   methods: {
-
+    register() {
+      this.$axios.post(this.$URL.userRegisterUrl, {
+          userName: this.phoneInput,
+          userPsw: this.codeInput,
+      }).then((response) => {
+        console.log(response);
+      });
+    },
   },
 };
 </script>

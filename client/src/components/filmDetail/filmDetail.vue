@@ -1,5 +1,5 @@
 <template>
-  <div class="film-detail">
+  <div class="film">
     <div class="detail-top">
       <div class="film-poster"
         :style="{'background-image': 'url('+film.poster+')'}">
@@ -29,6 +29,21 @@
         </div>
       </div>
 
+      <div class="actors">
+        <div class="actors-title-bar">
+          <span class="actors-title-text">演职人员</span>
+        </div>
+        <div class="actor-list">
+          <ul>
+            <li v-for="(item,index) in film.actors" :key="index">
+              <img :src="item.avatarAddress" />
+              <p>{{item.name}}</p>
+              <p>{{item.role}}</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+
       <mt-popup
         v-model="popupVisible"
         popup-transition="popup-fade">
@@ -40,7 +55,6 @@
     <div class="detail-Bottom">
       <button @click="popupVisible=!popupVisible">选座购票</button>
     </div>
-
 
   </div>
 </template>
@@ -84,7 +98,7 @@ export default {
 </script>
 
 <style lang="scss">
-.film-detail {
+.film {
   height: 100vh;
   overflow: hidden;
   display: flex;
@@ -92,6 +106,7 @@ export default {
   .detail-top{
     flex: 1;
     overflow: auto;
+    background-color: #ddd;
     .film-poster {
       height: 2.1rem;
       overflow: hidden;
@@ -166,6 +181,7 @@ export default {
       .film-synopsis {
         margin-top: 0.08rem;
         overflow: hidden;
+        height: 0.6rem;
         &.hide {
           height: 0.4rem;
         }
@@ -176,6 +192,61 @@ export default {
         &.hide {
           i {
             transform: translate(180deg);
+          }
+        }
+      }
+    }
+
+    .actors{
+      width: 100%;
+      height: 1.95rem;
+      margin-top: 0.1rem;
+      background: #fff;
+      overflow: hidden;
+      .actors-title-bar{
+        width: 100vw;
+        padding: 0.15rem;
+        font-size: 0.16rem;
+        line-height: 0.2rem;
+        color: #191a1b;
+      }
+      .actor-list{
+        font-size: 0.13rem;
+        // width: 300vw;
+        position: relative;
+        overflow-x: auto;
+        height: 1.45rem;
+        &:before{
+          content: "";
+          display: table;
+        }
+        &:after{
+          content: "";
+          display: table;
+        }
+        ul{
+          position: absolute;
+          display: flex;
+
+          li{
+            width: 0.85rem;
+            margin-right: 0.1rem;
+            img{
+              width: 0.85rem;
+              height: 0.85rem;
+            }
+            p{
+              margin-top: 0.05rem;
+              font-size: 0.12rem;
+              text-align: center;
+              color: #191a1b;
+              overflow: hidden;
+              text-overflow: hidden;
+              white-space: nowrap;
+              &:last-child{
+                color: #797d82;
+              }
+            }
           }
         }
       }
