@@ -7,7 +7,7 @@
         <!-- <span>获取验证码</span> -->
       </div>
       <div class="yzm">
-        <input type="text" placeholder="密码" v-model="codeInput">
+        <input type="password" placeholder="密码" v-model="codeInput">
       </div>
       <button :disabled="canRegister" @click="register">注册</button>
        <mt-popup

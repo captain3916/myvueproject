@@ -1,10 +1,12 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+import Store from '../store'; // 公共仓库
 
 Vue.use(Router);
 
 export default new Router({
   routes: [
+    // 根页面里面的四个页面
     {
       path: '/',
       component: () => import('../components/main/index.vue'),
@@ -43,6 +45,7 @@ export default new Router({
           name: 'center',
           component: () => import('../components/me/Me.vue'),
         },
+        // 9.9拼团
         {
           path: 'teamBuy',
           name: 'teamBuy',
@@ -54,12 +57,6 @@ export default new Router({
         },
       ],
     },
-    // 9.9拼团
-    // {
-    //   path: 'teamBuy',
-    //   name: 'teamBuy',
-    //   component: () => import('../components/teamBuy/teamBuy.vue'),
-    // },
     // 登录
     {
       path: '/login',
@@ -77,6 +74,10 @@ export default new Router({
       path: '/card',
       name: 'card',
       component: () => import('../components/maizuoCard/Card.vue'),
+      beforeEnter(to, from, next) { // 导航卫士,未登录不允许进入
+        if (Store.getters.isLogin) next(); // 已经登录则允许进入
+        else next({ name: 'login', query: { targetName: 'card' } });
+      },
     },
     // 城市列表
     {
@@ -90,6 +91,7 @@ export default new Router({
       name: 'filmDetail',
       component: () => import('../components/filmDetail/filmDetail.vue'),
     },
+    // 其它页面重定向
     {
       path: '*',
       redirect: '/films/nowPlaying',

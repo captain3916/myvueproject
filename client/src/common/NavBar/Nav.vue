@@ -90,6 +90,9 @@ export default {
           &.cinemas i{
             background-image: url(./NavImages/cinemas_on.png);
           }
+          &.teamBuy i{
+            background-image: url(./NavImages/uugroupon_on.png);
+          }
           &.center i{
             background-image: url(./NavImages/center_on.png);
           }

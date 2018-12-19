@@ -7,7 +7,7 @@
         <!-- <span>获取验证码</span> -->
       </div>
       <div class="yzm">
-        <input type="text" placeholder="密码" v-model="codeInput">
+        <input type="password" placeholder="密码" v-model="codeInput">
       </div>
       <button :disabled="canLogin" @click="login">登录</button>
       <button @click="$router.replace('/register')" class="register">没有账号,我要注册</button>
@@ -70,10 +70,13 @@ export default {
             const user = response.data.userName;
             localStorage.setItem('userName', user);
             this.addUserName(user);
-
             // 登录成功 跳转回之前页面
-            this.$router.go(-1);
-            // this.$router.replace('/login');
+            const targetName = this.$route.query.targetName;
+            if (targetName) {
+              this.$router.replace({ name: targetName });
+            } else {
+              this.$router.go(-1);
+            }
           }
         });
       }
