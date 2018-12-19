@@ -1,20 +1,27 @@
 <template>
   <div>
-    <header id="header">
+    <div id="content">
       <div class="logo"></div>
       <div class="sj">
-        <input type="text" placeholder="用户名" v-model="phoneInput">
+        <input type="text" placeholder="手机号" v-model="phoneInput">
         <!-- <span>获取验证码</span> -->
       </div>
       <div class="yzm">
         <input type="text" placeholder="密码" v-model="codeInput">
       </div>
       <button :disabled="canRegister" @click="register">注册</button>
-    </header>
+       <mt-popup
+        v-model="popupVisible"
+        popup-transition="popup-fade">
+        {{regMsg}}
+      </mt-popup>
+    </div>
   </div>
 </template>
 
 <script>
+import { Popup } from 'mint-ui';
+
 export default {
   name: 'Login',
 
@@ -22,7 +29,12 @@ export default {
     return {
       phoneInput: '',
       codeInput: '',
+      popupVisible: false,
+      regMsg: '',
     };
+  },
+  components: {
+    'mt-popup': Popup,
   },
 
   computed: {
@@ -34,12 +46,26 @@ export default {
 
   methods: {
     register() {
-      this.$axios.post(this.$URL.userRegisterUrl, {
-          userName: this.phoneInput,
-          userPsw: this.codeInput,
-      }).then((response) => {
-        console.log(response);
-      });
+      const phoneReg = /^1\d{10}$/; // 手机号正则
+      const pswReg = /^\w{6,20}$/; // 密码正则
+      if (!phoneReg.test(this.phoneInput)) {
+        this.regMsg = '手机号输入有误,请检查!';
+        this.popupVisible = !this.popupVisible;
+      } else if (!pswReg.test(this.codeInput)) {
+        this.regMsg = '密码长度需要6-20位';
+        this.popupVisible = !this.popupVisible;
+      } else {
+        this.$axios.post(this.$URL.userRegisterUrl, {
+            userName: this.phoneInput,
+            userPsw: this.codeInput,
+        }).then((response) => {
+          this.popupVisible = !this.popupVisible;
+          this.regMsg = response.data.msg;
+          if (response.data.code === 0) {
+            this.$router.replace('/login');
+          }
+        });
+      }
     },
   },
 };
@@ -47,10 +73,11 @@ export default {
 
 <style lang="scss" scoped>
 
-#header {
+#content {
   height: 5rem;
   display: flex;
   flex-direction: column;
+  font-size: 0.16rem;
   .logo {
     // flex: 1;
     width: 1rem;
@@ -90,6 +117,14 @@ export default {
     &[disabled]{
       background: #ccc;
     }
+  }
+  .mint-popup{
+    width: 90%;
+    height: 1rem;
+    text-align: center;
+    font-size: 0.2rem;
+    line-height: 1rem;
+    color: #ff5f16;
   }
 }
 </style>

@@ -8,6 +8,7 @@ Vue.use(Vuex);
 const state = {
   curCity: '', // 当前城市
   curCityId: 0, // 当前城市Id
+  userName: localStorage.getItem('userName'),
 };
 
 // 同步方法
@@ -30,12 +31,19 @@ const mutations = {
   addCityId(statedata, palyload) {
     statedata.curCityId = palyload;
   },
+  // 登录,提交用户名
+  addUserName(statedata, playload) {
+    statedata.userName = playload;
+  },
 };
 
 // 计算
 const getters = {
-
-
+  // 是否处于登录状态
+  isLogin(statedata) {
+    if (statedata.userName) return true;
+    return false;
+  },
 };
 
 export default new Vuex.Store({

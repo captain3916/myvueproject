@@ -21,7 +21,7 @@ router.post("/register", (req, res) => {
     if (err) {
       console.log(err);
       result.code = 1;
-      result.msg = '网络繁忙,请稍后';
+      result.msg = '网络繁忙,请稍后!';
       res.json(result);
       return;
     }
@@ -32,14 +32,14 @@ router.post("/register", (req, res) => {
         db.collection("users").find({userName}).count().then(
           (num) => {
             if (num === 0) cb(null);
-            else cb('用户名已经存在');
+            else cb('用户名已经存在!');
           },
           (err) => cb(err)
         )
       },
       function(cb) {
         db.collection('users').insertOne({userName,userPsw}, (err) => {
-          if (err) cb('数据库写入失败');
+          if (err) cb('数据库写入失败!');
           else cb(null);
         });
       }
@@ -49,7 +49,7 @@ router.post("/register", (req, res) => {
         result.msg = err;
       } else {
         result.code = 0;
-        result.msg = '注册成功';
+        result.msg = '注册成功!';
       }
       client.close();
       res.json(result);
@@ -74,7 +74,7 @@ router.post("/login", (req, res) => {
     if (err) {
       console.log(err);
       result.code = 1;
-      result.msg = '网络繁忙,请稍后';
+      result.msg = '网络繁忙,请稍后!';
       res.json(result);
       return;
     }
@@ -84,11 +84,12 @@ router.post("/login", (req, res) => {
       (num) => {
         if (num === 0) {
           result.code = 0;
-          result.msg = '用户名或密码错误';
+          result.msg = '用户名或密码错误!';
         }
         else if(num === 1) {
           result.code = 0;
-          result.msg = '登录成功';
+          result.msg = '登录成功!';
+          result.userName = userName;
         }
         client.close();
         res.json(result);
@@ -96,7 +97,7 @@ router.post("/login", (req, res) => {
       (err) => {
         console.log(err);
         result.code = 1;
-        result.msg = '数据库连接错误';
+        result.msg = '数据库连接错误!';
         client.close();
         res.json(result);
       }

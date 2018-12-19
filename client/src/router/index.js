@@ -72,6 +72,12 @@ export default new Router({
       name: 'register',
       component: () => import('../components/register/register.vue'),
     },
+    // 卖座卡页面
+    {
+      path: '/card',
+      name: 'card',
+      component: () => import('../components/maizuoCard/Card.vue'),
+    },
     // 城市列表
     {
       path: '/city',
@@ -84,9 +90,9 @@ export default new Router({
       name: 'filmDetail',
       component: () => import('../components/filmDetail/filmDetail.vue'),
     },
-    // {
-    //   path: '*',
-    //   redirect: '/films/nowPlaying',
-    // },
+    {
+      path: '*',
+      redirect: '/films/nowPlaying',
+    },
   ],
 });

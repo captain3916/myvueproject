@@ -5,8 +5,9 @@
         <i class="iconfont icon-filedicon_my_green_"></i>
       </div>
       <h2>
-        <router-link to="/login">立即登录</router-link>
+        <router-link :to="isLogin ? '': '/login'">{{user}}</router-link>
       </h2>
+      <span v-if="isLogin" @click="outLogin">退出</span>
     </header>
     <main class="center-main">
       <div class="dingdan">
@@ -54,6 +55,8 @@
 </template>
 
 <script>
+import { mapState, mapGetters, mapMutations } from 'vuex';
+
 export default {
   name: 'Center',
   data() {
@@ -61,6 +64,29 @@ export default {
 
     };
   },
+  computed: {
+    ...mapState([
+      'userName',
+    ]),
+    ...mapGetters([
+      'isLogin', // 是否处于登录状态
+    ]),
+    // 页面上是要显示用户手机号还是立即登录按钮
+    user() {
+      if (this.userName) return this.userName;
+      return '立即登录';
+    },
+  },
+  methods: {
+    ...mapMutations([
+      'addUserName',
+    ]),
+    outLogin() {
+      localStorage.removeItem('userName');
+      this.addUserName('');
+    },
+  },
+
 };
 </script>
 
@@ -74,13 +100,13 @@ export default {
   background: url('/static/images/266643.jpg') no-repeat;
   background-size: 100%;
   display: flex;
+  align-items: center;
   .tou {
     height: 0.67rem;
     width: 0.67rem;
     border: 0.02rem solid white;
     background: #ccc;
     border-radius: 50%;
-    align-self: center;
     margin-left: 0.2rem;
     .iconfont {
       font-size: 0.6rem;
@@ -89,11 +115,16 @@ export default {
   }
   h2 {
     font-size: 0.24rem;
-    align-self: center;
-    margin-left: 0.2rem;
+    margin: 0 0.4rem 0 0.15rem;
     a {
       color: white;
     }
+  }
+  span{
+    font-size: 0.16rem;
+    color: #fff;
+    height: 0.25rem;
+    line-height: 0.25rem;
   }
 }
 .center-main {
