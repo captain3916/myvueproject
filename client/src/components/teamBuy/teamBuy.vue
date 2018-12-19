@@ -1,47 +1,20 @@
 <template>
-  <div class="teamBuyPage">
+  <div class="teamBuyPage" @scroll="isGetMore">
     <ul class="proContent">
-      <li>
-        <img class="ban" src="https://mall.s.maizuo.com/8b9cc12ffbe5a6f82683afc315aedcf8.jpg" />
+      <li v-for="(item,index) in list" :key="index">
+        <img class="ban" :src="item.activeBannerUrl" />
         <div class="detail">
-          <h2>三峡清江椪柑 3斤装</h2>
-          <p>优选果园新鲜采摘 果肉金黄剔透 鲜嫩多汁 清甜爽口 入口化渣</p>
+          <h2>{{item.masterTitle}}</h2>
+          <p>{{item.slaveTitle}}</p>
           <div class="priceAndbuy">
             <div class="priceanduser">
               <div class="price">
-                <p class="nowPrice"><span>￥</span>1350.0</p>
-                <p class="originPrice">原价1690.0</p>
+                <p class="nowPrice"><span>￥</span>{{item.price/100}}</p>
+                <p class="originPrice">原价{{item.marketPrice/100}}</p>
               </div>
               <div class="user">
-                <div>
-                  <img src="https://mall.s.maizuo.com/46b0e6b2d802852da925ee3e52baaf7b.jpg">
-                </div>
-                <div>
-                  <img src="https://mall.s.maizuo.com/b04a0b9f27f05f18e7dfa8b60e5f9f55.jpg">
-                </div>
-              </div>
-            </div>
-            <button>去拼单</button>
-          </div>
-        </div>
-      </li>
-      <li>
-        <img class="ban" src="https://mall.s.maizuo.com/8b9cc12ffbe5a6f82683afc315aedcf8.jpg" />
-        <div class="detail">
-          <h2>三峡清江椪柑 3斤装</h2>
-          <p>优选果园新鲜采摘 果肉金黄剔透 鲜嫩多汁 清甜爽口 入口化渣</p>
-          <div class="priceAndbuy">
-            <div class="priceanduser">
-              <div class="price">
-                <p class="nowPrice"><span>￥</span>1350.0</p>
-                <p class="originPrice">原价1690.0</p>
-              </div>
-              <div class="user">
-                <div>
-                  <img src="https://mall.s.maizuo.com/46b0e6b2d802852da925ee3e52baaf7b.jpg">
-                </div>
-                <div>
-                  <img src="https://mall.s.maizuo.com/b04a0b9f27f05f18e7dfa8b60e5f9f55.jpg">
+                <div v-for="(user,i) in item.userList" :key="i">
+                  <img :src="user.icon">
                 </div>
               </div>
             </div>
@@ -53,43 +26,59 @@
   </div>
 </template>
 
-// {
-//   "activeCode" : "JZnr0Wth",
-//   "masterTitle" : "三峡清江椪柑 3斤装",
-//   "slaveTitle" : "优选果园新鲜采摘 果肉金黄剔透 鲜嫩多汁 清甜爽口 入口化渣",
-//   "activeBannerUrl" : "https://mall.s.maizuo.com/8b9cc12ffbe5a6f82683afc315aedcf8.jpg",
-//   "price" : 1350.0,
-//   "marketPrice" : 1690.0,
-//   "productId" : 34834182.0,
-//   "relatedProductId" : 34833100.0,
-//   "isSub" : 0.0,
-//   "onlineStatus" : 1.0,
-//   "userList" : [
-//       {
-//           "icon" : "https://mall.s.maizuo.com/46b0e6b2d802852da925ee3e52baaf7b.jpg",
-//           "nickName" : "13925****61"
-//       },
-//       {
-//           "icon" : "https://mall.s.maizuo.com/b04a0b9f27f05f18e7dfa8b60e5f9f55.jpg",
-//           "nickName" : "15556****42"
-//       }
-//   ],
-//   "maxAvailableInventory" : 899996.0,
-//   "hasVideo" : 0.0,
-//   "labels" : {
-//       "buyerShow" : ""
-//   }
-// }
-
 <script>
 export default {
   name: 'teamBuy',
   data() {
     return {
-      msg: '我是9.9拼团页面',
+      pageSize: 3,
+      curPage: 1,
+      totalPage: 0,
+      list: [],
     };
   },
+  methods: {
+    // 获取拼团数据
+    getTeamBuyList() {
+      this.$axios.get(this.$URL.teamBuyUrl, {
+        params: {
+          pageSize: this.pageSize,
+          pageNum: this.pageNum,
+        },
+      }).then((response) => {
+        if (response.data.code === 0) {
+          // 数据请求回来了
+          this.totalPage = Math.ceil(response.data.data.total / this.pageSize);
+          this.list.push(...response.data.data.list);
+        } else {
+          /* eslint-disable no-alert */
+          alert(response.data.msg);
+        }
+      });
+    },
+
+    // 是否需要加载更多
+    isGetMore(arg) {
+      if (this.curPage > this.totalPage) {
+        console.log('没有更多了!');
+        return;
+      }
+      const conH = arg.target.offsetHeight; // 容器高度
+      const totalH = document.querySelector('.proContent').offsetHeight; // 里面子元素的高度
+      if (arg.target.scrollTop >= totalH - conH) {
+        this.curPage += 1;
+        this.getTeamBuyList();
+      }
+      // console.log(arg);
+      // console.log(totalH);
+      // console.log(scrollTop);
+    },
+  },
+  created() {
+    this.getTeamBuyList();
+  },
   mounted() {
+
   },
 };
 </script>

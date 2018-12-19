@@ -207,4 +207,56 @@ router.get("/getCinemas",(req,res)=>{
     });
 });
 
+/**
+ * 获取9.9拼团的数据
+ */
+//地址: http://localhost:3000/api/getTeamBuy
+router.get("/getTeamBuy",(req,res)=>{
+    console.log("请求了9.9拼团数据");
+    let pageSize = +req.query.pageSize || 5; //每页数量
+    let pageNum = +req.query.pageNum || 1;  //请求的页码
+    let result = {}; //要返回的数据
+
+    //连接数据库
+    MongoClient.connect(URL,{useNewUrlParser:true},(err,client)=>{
+        if(err){
+            console.log(err);
+            result.code = 1;
+            result.msg = '网络繁忙,请稍后';
+            res.json(result);
+            return;
+        }
+        let db = client.db('maizuo');
+        async.waterfall([
+            function(cb){
+                db.collection('teambuy').find().count((err,num)=>{
+                    if(err) cb(err);
+                    else cb(null,num);
+                });
+            },
+            function(num,cb){
+                db.collection('teambuy').find().limit(pageSize).skip(pageSize*(pageNum-1)).toArray((err,data)=>{
+                    if(err) cb(err);
+                    else cb(null,{num,data});
+                });
+            }
+        ],(err,data)=>{
+            if(err){
+                console.log(err);
+                result.code = 1;
+                result.msg = '网络繁忙,请稍后';
+            }else{
+                result.code = 0;
+                result.msg = 'OK';
+                result.data = {
+                    list: data.data,
+                    total:data.num //电影总数量
+                }
+            }
+            client.close();
+            res.json(result);
+        });
+    });
+});
+
 module.exports = router;
