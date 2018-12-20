@@ -79,6 +79,16 @@ export default new Router({
         else next({ name: 'login', query: { targetName: 'card' } });
       },
     },
+    // 购物车页面
+    {
+      path: '/shopCart',
+      name: 'shopCart',
+      component: () => import('../components/shopCard/shopCart.vue'),
+      beforeEnter(to, from, next) { // 导航卫士,未登录不允许进入
+        if (Store.getters.isLogin) next(); // 已经登录则允许进入
+        else next({ name: 'login', query: { targetName: 'shopCart' } });
+      },
+    },
     // 城市列表
     {
       path: '/city',

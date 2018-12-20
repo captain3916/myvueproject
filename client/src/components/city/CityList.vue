@@ -1,6 +1,5 @@
 <template>
   <div class="mint-indexlist city-index">
-
     <mt-header title="-当前城市-">
       <mt-button class="iconfont icon-xiangzuo"
         slot="left"

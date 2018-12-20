@@ -23,10 +23,16 @@
         </div>
       </li>
     </ul>
+    <mt-popup
+      v-model="isNoMore">
+    没有更多了！
+    </mt-popup>
   </div>
 </template>
 
 <script>
+import { Indicator, Popup } from 'mint-ui';
+
 export default {
   name: 'teamBuy',
   data() {
@@ -35,17 +41,26 @@ export default {
       curPage: 1,
       totalPage: 0,
       list: [],
+      isNoMore: false,
     };
+  },
+  components: {
+    'mt-popup': Popup,
   },
   methods: {
     // 获取拼团数据
     getTeamBuyList() {
+      Indicator.open({
+        text: '加载中...',
+        spinnerType: 'fading-circle',
+      });
       this.$axios.get(this.$URL.teamBuyUrl, {
         params: {
           pageSize: this.pageSize,
-          pageNum: this.pageNum,
+          pageNum: this.curPage,
         },
       }).then((response) => {
+        Indicator.close();
         if (response.data.code === 0) {
           // 数据请求回来了
           this.totalPage = Math.ceil(response.data.data.total / this.pageSize);
@@ -59,26 +74,21 @@ export default {
 
     // 是否需要加载更多
     isGetMore(arg) {
-      if (this.curPage > this.totalPage) {
-        console.log('没有更多了!');
-        return;
-      }
       const conH = arg.target.offsetHeight; // 容器高度
       const totalH = document.querySelector('.proContent').offsetHeight; // 里面子元素的高度
       if (arg.target.scrollTop >= totalH - conH) {
         this.curPage += 1;
+        if (this.curPage > this.totalPage) {
+          console.log('没有更多了!');
+          this.isNoMore = true;
+          return;
+        }
         this.getTeamBuyList();
       }
-      // console.log(arg);
-      // console.log(totalH);
-      // console.log(scrollTop);
     },
   },
   created() {
     this.getTeamBuyList();
-  },
-  mounted() {
-
   },
 };
 </script>
@@ -172,6 +182,14 @@ export default {
 
       }
     }
+  }
+  .mint-popup{
+    font-size: 0.2rem;
+    text-align: center;
+    width: 100%;
+    height: 0.6rem;
+    line-height: 0.6rem;
+    color: #c03131;
   }
 }
 </style>

@@ -11,7 +11,7 @@
     </header>
     <main class="center-main">
       <div class="dingdan">
-        <h3>
+        <h3 @click="$router.push('/shopCart')">
           <i class="iconfont icon-dingdan" style="color: orange;"></i>
           <span>电影订单</span>
         </h3>

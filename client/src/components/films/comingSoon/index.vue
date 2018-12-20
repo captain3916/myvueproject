@@ -23,12 +23,12 @@
               <span class="label">{{item.nation}} | {{item.runtime}}分钟</span>
             </div>
           </div>
-          <div class="file-buy">预购</div>
-          <!-- <div class="file-buy">
+          <!-- <div class="file-buy">预购</div> -->
+          <div class="file-buy">
             <button @click.stop="addDilm(item)">+</button>
             <input type="text" :value="getNum(item.filmId)">
             <button @click.stop="reduceFilm(item)">-</button>
-          </div> -->
+          </div>
         </a>
       </li>
     </ul>
@@ -36,6 +36,8 @@
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex';
+
 export default {
   name: 'comingSoon',
   data() {
@@ -46,7 +48,26 @@ export default {
       pageSize: 10, // 每页条数
     };
   },
+  computed: {
+    ...mapState([
+      'userShopCard', // [{filmName,filmId,filmNum,price},...]
+    ]),
+  },
   methods: {
+    ...mapMutations([
+      'addDilm',
+      'reduceFilm',
+    ]),
+    /**
+     * 根据ID获取购车内对应商品的购买数量
+     */
+    getNum(id) {
+      let num = 0;
+      this.userShopCard.forEach((item) => {
+        if (item.filmId === id) num = item.filmNum;
+      });
+      return num;
+    },
     /**
      * 获取电影列表
      */
@@ -63,7 +84,7 @@ export default {
           this.totalPage = Math.ceil(response.data.data.total / this.pageSize);
           const films = response.data.data.films;
           for (let i = 0; i < films.length; i += 1) {
-            films[i].filmNum = 0;
+            films[i].price = Math.round((Math.random() * 30) + 35);
           }
           this.filmList.push(...films);
           // this.filmList = this.filmList.concat(response.data.data.films);

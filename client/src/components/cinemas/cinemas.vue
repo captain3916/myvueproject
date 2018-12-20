@@ -37,7 +37,7 @@
 
 <script>
 import { Cell, Header, Button, Search, Indicator } from 'mint-ui';
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 
 export default {
   name: 'cinemas',
@@ -69,27 +69,42 @@ export default {
       return arr;
     },
   },
+  methods: {
+    ...mapActions([
+      'getCity',
+    ]),
+      // 获取当前城市所有影院数据
+    getCinemas() {
+      Indicator.open({
+        text: '加载中...',
+        spinnerType: 'fading-circle',
+      });
+      const cityId = this.curCityId;
+      this.$axios.get(this.$URL.cinemasUrl, {
+        params: { cityId },
+      }).then((response) => {
+        if (response.data.code === 0) {
+          this.cinemas = response.data.data.cinemas;
+        }
+        Indicator.close();
+      });
+    },
+  },
   components: {
     'mt-cell': Cell,
     'mt-header': Header,
     'mt-button': Button,
     'mt-search': Search,
   },
+  watch: {
+    // 监听当前城市ID
+    // 解决客户在当前页面直接刷新时不会重新请求数据的问题
+    curCityId() {
+      this.getCinemas();
+    },
+  },
   created() {
-    // 获取当前城市所有影院数据
-    Indicator.open({
-      text: '加载中...',
-      spinnerType: 'fading-circle',
-    });
-    const cityId = this.curCityId;
-    this.$axios.get(this.$URL.cinemasUrl, {
-      params: { cityId },
-    }).then((response) => {
-      if (response.data.code === 0) {
-        this.cinemas = response.data.data.cinemas;
-      }
-      Indicator.close();
-    });
+    this.getCinemas();
   },
 
 };

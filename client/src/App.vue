@@ -10,8 +10,19 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+
 export default {
   name: 'App',
+  methods: {
+    ...mapActions([
+      'getCity',
+    ]),
+  },
+  mounted() {
+    // 获取当前城市
+    this.getCity();
+  },
 };
 </script>
 
@@ -23,9 +34,9 @@ html,body,#app{
   font-size: 26.67vw;
 }
 .bounceInup{
-  animation-duration: 2000ms;
+  animation-duration: 1500ms;
 }
 .bounceOutDown{
-  animation-duration: 2000ms;
+  animation-duration: 1500ms;
 }
 </style>

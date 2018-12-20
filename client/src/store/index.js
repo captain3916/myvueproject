@@ -1,40 +1,20 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import mutations from './mutations'; // 同步更改state数据方法
 import actions from './actions'; // 异步方法
 
 Vue.use(Vuex);
 
 // 状态(数据)
 const state = {
-  curCity: '', // 当前城市
-  curCityId: 0, // 当前城市Id
+  // 当前城市
+  curCity: '',
+  // 当前城市Id
+  curCityId: 0,
+  // 用户名
   userName: localStorage.getItem('userName'),
-};
-
-// 同步方法
-const mutations = {
-  /**
-   * 提交城市
-   * @param {Object} statedata 就是当前 store实例的 state 属性
-   * @param {String} palyload 参数
-   */
-  /* eslint no-param-reassign: ["error", { "props": false }] */
-  addCity(statedata, palyload) {
-    const leg = palyload.length;
-    // 如果城市以‘市’结尾，则去掉市字
-    if (palyload[leg - 1] === '市') {
-      statedata.curCity = palyload.slice(0, leg - 1);
-    } else {
-      statedata.curCity = palyload;
-    }
-  },
-  addCityId(statedata, palyload) {
-    statedata.curCityId = palyload;
-  },
-  // 登录,提交用户名
-  addUserName(statedata, playload) {
-    statedata.userName = playload;
-  },
+  // 用户购物车信息 [{filmName,filmId,filmNum,price},...]
+  userShopCard: localStorage.getItem('shopCard') ? JSON.parse(localStorage.getItem('shopCard')) : [],
 };
 
 // 计算
