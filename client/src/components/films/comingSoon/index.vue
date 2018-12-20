@@ -23,20 +23,31 @@
               <span class="label">{{item.nation}} | {{item.runtime}}分钟</span>
             </div>
           </div>
-          <!-- <div class="file-buy">预购</div> -->
-          <div class="file-buy">
-            <button @click.stop="addDilm(item)">+</button>
-            <input type="text" :value="getNum(item.filmId)">
-            <button @click.stop="reduceFilm(item)">-</button>
-          </div>
+          <div class="file-buy" @click.stop="goToBuy(item)">预购</div>
         </a>
       </li>
     </ul>
+    <mt-popup
+      v-model="popupVisible"
+      popup-transition="popup-fade">
+      <div class="descript">
+        <span>减少</span>
+        <span>张数</span>
+        <span>增加</span>
+      </div>
+      <div class="buyInfo">
+        <button class="reduce" @click.stop="reduceFilm(curFilm)">-</button>
+        <span>{{getNum(curFilm.filmId)}}</span>
+        <button class="add" @click.stop="addDilm(curFilm)">+</button>
+      </div>
+      <div class="sub" @click="popupVisible=false">确定</div>
+    </mt-popup>
   </div>
 </template>
 
 <script>
 import { mapState, mapMutations } from 'vuex';
+import { Popup } from 'mint-ui';
 
 export default {
   name: 'comingSoon',
@@ -46,7 +57,12 @@ export default {
       totalPage: 0, // 总页数
       pageNum: 1, // 当前页码
       pageSize: 10, // 每页条数
+      popupVisible: false, // 是否弹出电影购票弹窗
+      curFilm: 0, // 当前要购票的是哪个电影
     };
+  },
+  components: {
+    'mt-popup': Popup,
   },
   computed: {
     ...mapState([
@@ -103,6 +119,11 @@ export default {
         return list.map(item => item.name).join(' ');
       }
       return '';
+    },
+    // 点击购票按钮
+    goToBuy(film) {
+      this.curFilm = film;
+      this.popupVisible = true;
     },
   },
   created() {
@@ -182,22 +203,25 @@ export default {
           }
         }
         .file-buy {
-          font-size: 0.16rem;
-          height: 100%;
-          width: 0.5rem;
+          font-size: 13px;
+          line-height: 25px;
+          height: 25px;
+          width: 50px;
+          color: #ff5f16;
           text-align: center;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          height: 100%;
-          button{
-            width: 100%;
-            font-size: 0.16rem;
-            height: 0.2rem;
-            line-height: 0.2rem;
-          }
-          input{
-            height: 0.25rem;
+          border-radius: 2px;
+          position: relative;
+          &::after{
+            content: "";
+            position: absolute;
+            border: 1px solid #ff5f16;
+            top: -50%;
+            bottom: -50%;
+            left: -50%;
+            right: -50%;
+            border-radius: 4px;
+            -webkit-transform: scale(0.5);
+            transform: scale(0.5);
           }
         }
       }
@@ -213,6 +237,48 @@ export default {
       bottom: -1px;
       transform: scaleY(0.5);
     }
+  }
+  .mint-popup{
+    width: 80vw;
+    font-size: 0.16rem;
+    .descript{
+      height: 0.4rem;
+      font-size: 0.18rem;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background: #ccc;
+    }
+    .buyInfo{
+      height: 0.5rem;
+      font-size: 0.18rem;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      button{
+        width: 0.25rem;
+        height: 0.25rem;
+        font-size: 0.2rem;
+        line-height: 0.25rem;
+        border-radius: 50%;
+        background: white;
+        &.add{
+          border: 1px solid #337ab7;
+        }
+        &.reduce{
+          border: 1px solid #d9534f;
+        }
+      }
+    }
+    .sub{
+      text-align: center;
+      font-size: 0.2rem;
+      height: 0.4rem;
+      line-height: 0.4rem;
+      background: #5cb85c;
+      color: white;
+    }
+
   }
 }
 </style>

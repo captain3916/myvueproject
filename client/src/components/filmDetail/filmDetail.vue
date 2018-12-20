@@ -44,11 +44,10 @@
         </div>
       </div>
 
-      <mt-popup
+      <!-- <mt-popup
         v-model="popupVisible"
         popup-transition="popup-fade">
-        <h3>hehehehehe</h3>
-      </mt-popup>
+      </mt-popup> -->
 
     </div>
 
@@ -68,7 +67,7 @@ export default {
   data() {
     return {
       filmId: this.$route.params.filmId,
-      popupVisible: false,
+      // popupVisible: false,
       film: {},
     };
   },

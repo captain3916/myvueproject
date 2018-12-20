@@ -59,4 +59,9 @@ export default {
     // 写入localStorage
     localStorage.setItem('shopCard', JSON.stringify(state.userShopCard));
   },
+  // 清空购物车
+  clearCart(state) {
+    state.userShopCard = [];
+    localStorage.removeItem('shopCart');
+  },
 };
