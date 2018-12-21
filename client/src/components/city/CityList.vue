@@ -13,7 +13,9 @@
     </mt-search>
 
     <ul class="mint-indexlist-content"
-      v-if="isCityShow">
+      v-if="isCityShow"
+      ref="ulContent"
+      @scroll="jump">
       <div class="recommend-city">
         <div class="gprs-city">
           <div class="city-index-title">GPS定位你所在的城市</div>
@@ -34,7 +36,10 @@
       </div>
       <li class="mint-indexsection city-index-section"
         v-for="(item,index) in citySort"
-        :key="index">
+        :key="index"
+        :id="'index_' + item.letter"
+        :ref="'index_' + item.letter"
+        >
         <p class="mint-indexsection-index">{{item.letter}}</p>
         <ul>
           <li v-for="(it,i) in item.list"
@@ -47,7 +52,10 @@
     </ul>
     <div class="mint-indexlist-nav" v-if="isCityShow">
       <ul>
-        <li v-for="(item,index) in firstLetter" :key="index">
+        <li v-for="(item,index) in firstLetter"
+          :key="index"
+          @click="goClickLetter(item, index)"
+          :class="{'active': curLetterIndex===index}">
           {{item}}
         </li>
       </ul>
@@ -71,9 +79,10 @@ export default {
   name: 'CityList',
   data() {
     return {
-      cityList: [],
-      keyValue: '',
-
+      cityList: [], // 所有城市列表
+      keyValue: '', // 搜索城市的关键字
+      curLetterIndex: 0, // 左右联动中当前显示的字母下标
+      listPosition: [],
     };
   },
   computed: {
@@ -134,6 +143,25 @@ export default {
       this.addCityId(item.cityId);
       this.$router.go(-1);
     },
+    // 城市滚动时
+    jump(eve) {
+      const scrTop = eve.target.scrollTop;
+      for (let i = 1; i < this.listPosition.length; i += 1) {
+        if (scrTop > this.listPosition[i - 1] && scrTop < this.listPosition[i]) {
+          this.curLetterIndex = i;
+          break;
+        }
+      }
+      // console.log(scrTop);
+    },
+    // 去到点击的字母对应的城市列表
+    goClickLetter(item, index) {
+      this.curLetterIndex = index;
+      // 根据item 去获取 元素
+      const el = document.getElementById(`index_${item}`);
+      const top = el.offsetTop - 92;
+      this.$refs.ulContent.scrollTop = top;
+    },
   },
   components: {
     'mt-header': Header,
@@ -153,13 +181,21 @@ export default {
       if (response.data.code === 0) {
         this.cityList = response.data.data.citys;
         Indicator.close();
+        // 获取数据渲染后左侧各城市距离偏移高度
+        this.$nextTick(() => {
+          this.firstLetter.forEach((item) => {
+            // console.log('index_' + item);
+            const el = this.$refs[`index_${item}`][0];
+            const top = el.offsetTop - 92;
+            this.listPosition.push(top);
+          });
+        });
       } else {
         /* eslint-disable no-alert */
         alert(response.data.msg);
       }
     });
   },
-
 };
 </script>
 
@@ -212,6 +248,9 @@ export default {
         font-size: 12px;
         padding: 0 2px;
         color: #191a1b;
+        &.active{
+          color: red;
+        }
       }
     }
   }
