@@ -131,10 +131,62 @@ export default {
   }
 }
 
+.mint-popup{
+  width: 80vw;
+  font-size: 0.16rem;
+  .descript{
+    height: 0.4rem;
+    font-size: 0.18rem;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background: #ccc;
+  }
+  .buyInfo{
+    height: 0.5rem;
+    font-size: 0.18rem;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    button{
+      width: 0.25rem;
+      height: 0.25rem;
+      font-size: 0.2rem;
+      line-height: 0.25rem;
+      border-radius: 50%;
+      background: white;
+      &.add{
+        border: 1px solid #337ab7;
+      }
+      &.reduce{
+        border: 1px solid #d9534f;
+      }
+    }
+  }
+  .sub{
+    text-align: center;
+    font-size: 0.2rem;
+    height: 0.4rem;
+    line-height: 0.4rem;
+    background: #5cb85c;
+    color: white;
+  }
+
+}
+
 .fadeInRight{
   animation-duration: 500ms;
 }
 .fadeOutLeft{
   animation-duration: 500ms;
+}
+
+div.loadMore{
+  width: 100%;
+  height: 0.25rem;
+  line-height: 0.25rem;
+  text-align: center;
+  font-size: 0.18rem;
+  color: #ccc;
 }
 </style>

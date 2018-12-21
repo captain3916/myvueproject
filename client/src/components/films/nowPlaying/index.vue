@@ -23,16 +23,32 @@
               <span class="label">{{item.nation}} | {{item.runtime}}分钟</span>
             </div>
           </div>
-          <div class="file-buy">购票</div>
+          <div class="file-buy" @click.stop.prevent="goToBuy(item)">购票</div>
         </router-link>
       </li>
     </ul>
     <div class="loadMore" @click="loadMore">{{loadMsg}}</div>
+    <mt-popup
+      v-model="popupVisible"
+      popup-transition="popup-fade">
+      <div class="descript">
+        <span>减少</span>
+        <span>张数</span>
+        <span>增加</span>
+      </div>
+      <div class="buyInfo">
+        <button class="reduce" @click.stop="reduceFilm(curFilm)">-</button>
+        <span>{{getNum(curFilm.filmId)}}</span>
+        <button class="add" @click.stop="addDilm(curFilm)">+</button>
+      </div>
+      <div class="sub" @click="popupVisible=false">确定</div>
+    </mt-popup>
   </div>
 </template>
 
 <script>
-import { Indicator } from 'mint-ui';
+import { Indicator, Popup } from 'mint-ui';
+import { mapState, mapMutations } from 'vuex';
 
 export default {
   name: 'noPlayfilm',
@@ -43,9 +59,38 @@ export default {
       totalPage: 0, // 总页数
       pageNum: 1, // 当前页码
       pageSize: 6, // 每页条数
+      popupVisible: false, // 购物弹出框
+      curFilm: 0, // 当前要购票的是哪个电影
     };
   },
+  components: {
+    'mt-popup': Popup,
+  },
+  computed: {
+    ...mapState([
+      'userShopCard', // [{filmName,filmId,filmNum,price},...]
+    ]),
+  },
   methods: {
+    ...mapMutations([
+      'addDilm',
+      'reduceFilm',
+    ]),
+    /**
+     * 根据ID获取购车内对应商品的购买数量
+     */
+    getNum(id) {
+      let num = 0;
+      this.userShopCard.forEach((item) => {
+        if (item.filmId === id) num = item.filmNum;
+      });
+      return num;
+    },
+    // 点击购票按钮
+    goToBuy(film) {
+      this.curFilm = film;
+      this.popupVisible = true;
+    },
     /**
      * 获取电影列表
      */
@@ -64,7 +109,11 @@ export default {
       .then((response) => {
         if (response.data.code === 0) {
           this.totalPage = Math.ceil(response.data.data.total / this.pageSize);
-          this.filmList.push(...response.data.data.films);
+          const films = response.data.data.films;
+          for (let i = 0; i < films.length; i += 1) {
+            films[i].price = Math.round((Math.random() * 30) + 35);
+          }
+          this.filmList.push(...films);
           // this.filmList = this.filmList.concat(response.data.data.films);
         } else {
           /* eslint-disable no-alert */
@@ -83,6 +132,7 @@ export default {
       }
       return '';
     },
+    // 加载更多
     loadMore() {
       if (this.pageNum >= this.totalPage) {
         this.loadMsg = '别拉了，我是有底线的！';
@@ -101,14 +151,7 @@ export default {
 <style lang="scss">
 .nowPlayingList-wrap {
   background: #fff;
-  div.loadMore{
-    width: 100%;
-    height: 0.25rem;
-    line-height: 0.25rem;
-    text-align: center;
-    font-size: 0.18rem;
-    color: #ccc;
-  }
+
   ul {
     margin-left: 0.15rem;
     font-size: 0.12rem;

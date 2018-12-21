@@ -3,7 +3,7 @@
     <ul>
       <li v-for="(item,index) in filmList"
         :key="index">
-        <a>
+        <router-link :to="'/film/' + item.filmId">
           <div class="film-img">
             <img :src="item.poster" alt>
           </div>
@@ -23,10 +23,11 @@
               <span class="label">{{item.nation}} | {{item.runtime}}分钟</span>
             </div>
           </div>
-          <div class="file-buy" @click.stop="goToBuy(item)">预购</div>
-        </a>
+          <div class="file-buy" @click.stop.prevent="goToBuy(item)">预购</div>
+        </router-link>
       </li>
     </ul>
+    <div class="loadMore" @click="loadMore">{{loadMsg}}</div>
     <mt-popup
       v-model="popupVisible"
       popup-transition="popup-fade">
@@ -56,9 +57,10 @@ export default {
       filmList: [],
       totalPage: 0, // 总页数
       pageNum: 1, // 当前页码
-      pageSize: 10, // 每页条数
+      pageSize: 6, // 每页条数
       popupVisible: false, // 是否弹出电影购票弹窗
       curFilm: 0, // 当前要购票的是哪个电影
+      loadMsg: '点击加载下一页',
     };
   },
   components: {
@@ -124,6 +126,15 @@ export default {
     goToBuy(film) {
       this.curFilm = film;
       this.popupVisible = true;
+    },
+    // 加载更多
+    loadMore() {
+      if (this.pageNum >= this.totalPage) {
+        this.loadMsg = '别拉了，我是有底线的！';
+        return;
+      }
+      this.pageNum += 1;
+      this.getFilms();
     },
   },
   created() {
@@ -237,48 +248,6 @@ export default {
       bottom: -1px;
       transform: scaleY(0.5);
     }
-  }
-  .mint-popup{
-    width: 80vw;
-    font-size: 0.16rem;
-    .descript{
-      height: 0.4rem;
-      font-size: 0.18rem;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      background: #ccc;
-    }
-    .buyInfo{
-      height: 0.5rem;
-      font-size: 0.18rem;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      button{
-        width: 0.25rem;
-        height: 0.25rem;
-        font-size: 0.2rem;
-        line-height: 0.25rem;
-        border-radius: 50%;
-        background: white;
-        &.add{
-          border: 1px solid #337ab7;
-        }
-        &.reduce{
-          border: 1px solid #d9534f;
-        }
-      }
-    }
-    .sub{
-      text-align: center;
-      font-size: 0.2rem;
-      height: 0.4rem;
-      line-height: 0.4rem;
-      background: #5cb85c;
-      color: white;
-    }
-
   }
 }
 </style>
