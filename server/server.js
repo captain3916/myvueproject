@@ -5,6 +5,11 @@ const userRouter = require('./Router/userRouter');
 
 let app = express();
 
+app.use((req, res, next) => {
+    res.set({'Access-Control-Allow-Origin':'*'});
+    next();
+});
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
