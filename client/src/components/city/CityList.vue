@@ -54,7 +54,7 @@
       <ul>
         <li v-for="(item,index) in firstLetter"
           :key="index"
-          @click="goClickLetter(item, index)"
+          @click="goClickLetter(index)"
           :class="{'active': curLetterIndex===index}">
           {{item}}
         </li>
@@ -83,6 +83,7 @@ export default {
       keyValue: '', // 搜索城市的关键字
       curLetterIndex: 0, // 左右联动中当前显示的字母下标
       listPosition: [],
+      isScroll: false,
     };
   },
   computed: {
@@ -144,23 +145,34 @@ export default {
       this.$router.go(-1);
     },
     // 城市滚动时
-    jump(eve) {
-      const scrTop = eve.target.scrollTop;
-      for (let i = 1; i < this.listPosition.length; i += 1) {
-        if (scrTop > this.listPosition[i - 1] && scrTop < this.listPosition[i]) {
-          this.curLetterIndex = i;
-          break;
+    jump(e) {
+      if (!this.isScroll) {
+        const scrTop = e.target.scrollTop;
+        for (let i = 1; i < this.listPosition.length; i += 1) {
+          if (scrTop > this.listPosition[i - 1] && scrTop < this.listPosition[i]) {
+            this.curLetterIndex = i;
+            break;
+          }
         }
       }
-      // console.log(scrTop);
     },
     // 去到点击的字母对应的城市列表
-    goClickLetter(item, index) {
+    goClickLetter(index) {
+      this.isScroll = true; // 点击导致的滚动
       this.curLetterIndex = index;
-      // 根据item 去获取 元素
-      const el = document.getElementById(`index_${item}`);
-      const top = el.offsetTop - 92;
-      this.$refs.ulContent.scrollTop = top;
+      const targetPosition = this.listPosition[index]; // 目标位置
+      const curPosition = this.$refs.ulContent.scrollTop; // 当前位置
+      const maxTarget = this.listPosition[this.listPosition.length - 1] - 300; // 最大目标值（最后一个Z的特殊情况）
+      const speed = Math.round((targetPosition - curPosition) / 20); // 500ms完成动画的速度
+      const timer = setInterval(() => {
+        this.$refs.ulContent.scrollTop += speed;
+        let current = this.$refs.ulContent.scrollTop;
+        if (Math.abs(targetPosition - current) <= Math.abs(speed) || current >= maxTarget) {
+          current = targetPosition;
+          clearInterval(timer);
+          this.isScroll = false; // 点击动画已经完成
+        }
+      }, 25);
     },
   },
   components: {
